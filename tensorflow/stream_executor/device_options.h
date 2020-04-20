@@ -25,8 +25,7 @@ limitations under the License.
 #include "tensorflow/stream_executor/platform/port.h"
 #include "tensorflow/stream_executor/platform/logging.h"
 
-namespace perftools {
-namespace gputools {
+namespace stream_executor {
 
 // Indicates a set of options for a device's usage, which generally must be
 // provided at StreamExecutor device-initialization time.
@@ -72,19 +71,18 @@ struct DeviceOptions {
     return !(*this == other);
   }
 
-  string ToString() {
+  std::string ToString() {
     return flags_ == 0 ? "none" : "kDoNotReclaimStackAllocation";
   }
 
   // Platform-specific device options. Expressed as key-value pairs to avoid
   // DeviceOptions subclass proliferation.
-  std::map<string, string> non_portable_tags;
+  std::map<std::string, std::string> non_portable_tags;
 
  private:
   unsigned flags_;
 };
 
-}  // namespace gputools
-}  // namespace perftools
+}  // namespace stream_executor
 
 #endif  // TENSORFLOW_STREAM_EXECUTOR_DEVICE_OPTIONS_H_

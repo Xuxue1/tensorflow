@@ -16,11 +16,11 @@ limitations under the License.
 #include "tensorflow/core/kernels/cwise_ops_common.h"
 
 namespace tensorflow {
-REGISTER5(BinaryOp, CPU, "Minimum", functor::minimum, float, Eigen::half,
-          double, int32, int64);
-#if GOOGLE_CUDA
-REGISTER4(BinaryOp, GPU, "Minimum", functor::minimum, float, Eigen::half,
-          double, int64);
+REGISTER7(BinaryOp, CPU, "Minimum", functor::minimum, float, Eigen::half,
+          bfloat16, double, int16, int32, int64);
+#if GOOGLE_CUDA || TENSORFLOW_USE_ROCM
+REGISTER5(BinaryOp, GPU, "Minimum", functor::minimum, float, Eigen::half,
+          double, int16, int64);
 
 // A special GPU kernel for int32.
 // TODO(b/25387198): Also enable int32 in device memory. This kernel
@@ -35,8 +35,7 @@ REGISTER_KERNEL_BUILDER(Name("Minimum")
 #endif
 
 #ifdef TENSORFLOW_USE_SYCL
-REGISTER(BinaryOp, SYCL, "Minimum", functor::minimum, float);
-
+REGISTER3(BinaryOp, SYCL, "Minimum", functor::minimum, float, double, int64);
 REGISTER_KERNEL_BUILDER(Name("Minimum")
                             .Device(DEVICE_SYCL)
                             .HostMemory("x")
@@ -44,6 +43,6 @@ REGISTER_KERNEL_BUILDER(Name("Minimum")
                             .HostMemory("z")
                             .TypeConstraint<int32>("T"),
                         BinaryOp<CPUDevice, functor::minimum<int32>>);
-#endif // TENSORFLOW_USE_SYCL
+#endif  // TENSORFLOW_USE_SYCL
 
 }  // namespace tensorflow
